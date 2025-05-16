@@ -8,6 +8,7 @@ export type TRegister = {
   otherEvents: string;
   actionsThatBroughtMe: { desc: string }[];
   actionsIWillTake: { desc: string }[];
+  apprenticeship: string;
   createdAt: Date;
 };
 
@@ -23,6 +24,7 @@ export interface RegisterStore extends RegisterState {
     actionHappend: { desc: string }[],
     actionsWillHappen: { desc: string }[]
   ) => void;
+  editedApprenticeship: (text: string) => void;
 }
 
 const defaultInitialState: RegisterState = {
@@ -33,6 +35,7 @@ const defaultInitialState: RegisterState = {
     otherEvents: "",
     actionsThatBroughtMe: [{ desc: "" }],
     actionsIWillTake: [{ desc: "" }],
+    apprenticeship: "",
     createdAt: new Date(),
   },
 };
@@ -53,6 +56,7 @@ export const createRegisterStore = (
           otherEvents: "",
           actionsIWillTake: [],
           actionsThatBroughtMe: [],
+          apprenticeship: "",
           createdAt: new Date(),
         },
       })),
@@ -70,6 +74,13 @@ export const createRegisterStore = (
           ...state.register,
           actionsThatBroughtMe,
           actionsIWillTake,
+        },
+      })),
+    editedApprenticeship: (text) =>
+      set((state) => ({
+        register: {
+          ...state.register,
+          apprenticeship: text,
         },
       })),
   }));

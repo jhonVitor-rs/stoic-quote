@@ -1,9 +1,11 @@
 "use client";
 
+import { NextPage, PreviousPage } from "@/components/navigation-buttons";
 import { Button } from "@/components/ui/button";
 import {
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -18,41 +20,59 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useRegisterStore } from "@/context/provider";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const formValidator = z.object({
   actions_happened: z
-    .array(z.object({ desc: z.string().min(10) }))
+    .array(
+      z.object({
+        desc: z
+          .string()
+          .min(10, "A descrição deve ter pelo menos 10 caracteres"),
+      })
+    )
     .min(3, "Adicione pelo menos 3 ações que aconteceram."),
   actions_will_happen: z
-    .array(z.object({ desc: z.string().min(10) }))
+    .array(
+      z.object({
+        desc: z
+          .string()
+          .min(10, "A descrição deve ter pelo menos 10 caracteres"),
+      })
+    )
     .min(3, "Adicione pelo menos 3 ações futuras."),
 });
 
 type FormType = z.infer<typeof formValidator>;
 
 export default function DailyStep2() {
-  const register = useRegisterStore((s) => s.register);
+  const router = useRouter();
+  const { actionsIWillTake, actionsThatBroughtMe } = useRegisterStore((s) => ({
+    actionsThatBroughtMe: s.register.actionsThatBroughtMe,
+    actionsIWillTake: s.register.actionsIWillTake,
+  }));
   const editedActions = useRegisterStore((s) => s.editedActions);
 
   const form = useForm<FormType>({
     resolver: zodResolver(formValidator),
     defaultValues: {
-      actions_happened: register.actionsThatBroughtMe?.length
-        ? register.actionsThatBroughtMe
+      actions_happened: actionsThatBroughtMe?.length
+        ? actionsThatBroughtMe
         : [{ desc: "" }],
-      actions_will_happen: register.actionsIWillTake?.length
-        ? register.actionsIWillTake
+      actions_will_happen: actionsIWillTake?.length
+        ? actionsIWillTake
         : [{ desc: "" }],
     },
+    mode: "onChange",
   });
 
   const handleSubmit = form.handleSubmit((data) => {
-    console.log(data);
     editedActions(data.actions_happened, data.actions_will_happen);
+    router.push("/dialy/step-3");
   });
 
   const {
@@ -67,6 +87,11 @@ export default function DailyStep2() {
     remove: removeWillHappen,
   } = useFieldArray({ control: form.control, name: "actions_will_happen" });
 
+  const happenedArrayError =
+    form.formState.errors.actions_happened?.root?.message;
+  const willHappenArrayError =
+    form.formState.errors.actions_will_happen?.root?.message;
+
   return (
     <div className="flex flex-col w-full gap-4">
       <CardHeader>
@@ -77,7 +102,7 @@ export default function DailyStep2() {
         </CardDescription>
         <CardDescription>
           ... então quando você se depara com aquela decisão difícil, que você
-          diz: &quote;eu não vou escolher, eu não quero&quote;, você já está
+          diz: &quot;eu não vou escolher, eu não quero&quot;, você já está
           escolhendo — escolheu ficar parado.
         </CardDescription>
         <CardDescription>Ludo Viajante</CardDescription>
@@ -98,7 +123,7 @@ export default function DailyStep2() {
                       <FormControl>
                         <Input {...field} placeholder="Descreva a ação" />
                       </FormControl>
-                      {happenedFields.length > 1 && (
+                      {happenedFields.length > 3 && (
                         <Button
                           type="button"
                           variant="outline"
@@ -119,9 +144,14 @@ export default function DailyStep2() {
               >
                 <Plus className="w-4 h-4 mr-2" /> Adicionar ação
               </Button>
-              <FormDescription>
-                Escreva aqui todas as ações que te trouxeram ate o ponto em que
-                você esta.
+              {happenedArrayError && (
+                <p className="text-sm font-medium text-destructive mt-2">
+                  {happenedArrayError}
+                </p>
+              )}
+              <FormDescription className="mt-2">
+                Escreva aqui todas as ações que te trouxeram até o ponto em que
+                você está. Mínimo de 3 ações.
               </FormDescription>
             </FormItem>
 
@@ -138,7 +168,7 @@ export default function DailyStep2() {
                       <FormControl>
                         <Input {...field} placeholder="Descreva a ação" />
                       </FormControl>
-                      {willHappenFields.length > 1 && (
+                      {willHappenFields.length > 3 && (
                         <Button
                           type="button"
                           variant="outline"
@@ -159,18 +189,30 @@ export default function DailyStep2() {
               >
                 <Plus className="w-4 h-4 mr-2" /> Adicionar ação
               </Button>
-              <FormDescription>
+              {willHappenArrayError && (
+                <p className="text-sm font-medium text-destructive mt-2">
+                  {willHappenArrayError}
+                </p>
+              )}
+              <FormDescription className="mt-2">
                 Escreva aqui quais ações você vai tomar para sair do ponto em
-                que você está, podem ser coisas simples que você ira realizar
-                amanhã
+                que você está, podem ser coisas simples que você irá realizar
+                amanhã. Mínimo de 3 ações.
               </FormDescription>
             </FormItem>
 
-            {/* BOTÃO DE ENVIO */}
-            <Button type="submit" className="mt-4">
-              Salvar
-            </Button>
+            <CardDescription>
+              Porém nem sempre nossas escolhas nos levam aonde queremos, e isto
+              nos leve ao próximo passo.
+            </CardDescription>
           </CardContent>
+          <CardFooter className="flex w-full items-center justify-around">
+            <PreviousPage
+              onClick={() => router.push("/dialy/step-1")}
+              variant="outline"
+            />
+            <NextPage type="submit" variant="outline" />
+          </CardFooter>
         </form>
       </Form>
     </div>

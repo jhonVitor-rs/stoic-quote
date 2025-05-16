@@ -3,7 +3,6 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight } from "lucide-react";
 import { useRegisterStore } from "@/context/provider";
 import {
   CardContent,
@@ -22,28 +21,38 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { NextPage } from "@/components/navigation-buttons";
+import { useRouter } from "next/navigation";
 
 const formValidator = z.object({
-  my_events: z.string().min(10),
-  other_events: z.string().min(10),
+  my_events: z
+    .string()
+    .min(10, "A descrição deve ter pelo menos 10 caracteres"),
+  other_events: z
+    .string()
+    .min(10, "A descrição deve ter pelo menos 10 caracteres"),
 });
 
 export default function DialyStep1() {
-  const register = useRegisterStore((s) => s.register);
+  const router = useRouter();
+  const { myEvents, otherEvents } = useRegisterStore((s) => ({
+    myEvents: s.register.myEvents,
+    otherEvents: s.register.otherEvents,
+  }));
   const editedEvents = useRegisterStore((s) => s.editedEvents);
 
   const form = useForm<z.infer<typeof formValidator>>({
     resolver: zodResolver(formValidator),
     defaultValues: {
-      my_events: register.myEvents,
-      other_events: register.otherEvents,
+      my_events: myEvents,
+      other_events: otherEvents,
     },
+    mode: "onChange",
   });
 
   const handlesubmit = form.handleSubmit(async (data) => {
-    console.log(data);
     editedEvents(data.my_events, data.other_events);
+    router.push("/dialy/step-2");
   });
 
   return (
@@ -111,13 +120,7 @@ export default function DialyStep1() {
             </CardDescription>
           </CardContent>
           <CardFooter className="flex w-full justify-end">
-            <Button
-              type="submit"
-              variant={"outline"}
-              className="rounded-full border-primary"
-            >
-              <ArrowRight />
-            </Button>
+            <NextPage type="submit" variant={"outline"} />
           </CardFooter>
         </form>
       </Form>
