@@ -35,17 +35,14 @@ const formValidator = z.object({
 
 export default function DialyStep1() {
   const router = useRouter();
-  const { myEvents, otherEvents } = useRegisterStore((s) => ({
-    myEvents: s.register.myEvents,
-    otherEvents: s.register.otherEvents,
-  }));
+  const register = useRegisterStore((s) => s.register);
   const editedEvents = useRegisterStore((s) => s.editedEvents);
 
   const form = useForm<z.infer<typeof formValidator>>({
     resolver: zodResolver(formValidator),
     defaultValues: {
-      my_events: myEvents,
-      other_events: otherEvents,
+      my_events: register.myEvents,
+      other_events: register.otherEvents,
     },
     mode: "onChange",
   });

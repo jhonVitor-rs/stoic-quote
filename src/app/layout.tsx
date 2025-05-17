@@ -29,12 +29,12 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "antialiased bg-primary-foreground flex flex-col w-full min-h-screen items-center justify-center",
+          "antialiased bg-primary/15 flex flex-col w-full min-h-screen items-center justify-center",
           geistSans.variable,
           geistMono.variable
         )}
       >
-        <div className="flex w-full max-w-5xl min-h-screen p-2 items-center justify-center bg-background shadow-2xl shadow-primary">
+        <div className="flex w-full max-w-5xl min-h-screen p-2 items-center justify-center bg-background shadow-4xl shadow-border border-l-8 border-primary">
           <ContextProvider>
             <TooltipProvider>{children}</TooltipProvider>
           </ContextProvider>

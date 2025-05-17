@@ -25,6 +25,7 @@ import { useRouter } from "next/navigation";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 
 const formValidator = z.object({
   actions_happened: z
@@ -51,20 +52,28 @@ type FormType = z.infer<typeof formValidator>;
 
 export default function DailyStep2() {
   const router = useRouter();
-  const { actionsIWillTake, actionsThatBroughtMe } = useRegisterStore((s) => ({
-    actionsThatBroughtMe: s.register.actionsThatBroughtMe,
-    actionsIWillTake: s.register.actionsIWillTake,
-  }));
+  const register = useRegisterStore((s) => s.register);
   const editedActions = useRegisterStore((s) => s.editedActions);
+
+  useEffect(() => {
+    if (
+      !register.myEvents ||
+      register.myEvents === "" ||
+      !register.otherEvents ||
+      register.otherEvents === ""
+    ) {
+      router.push("/dialy/step-1");
+    }
+  }, [register, router]);
 
   const form = useForm<FormType>({
     resolver: zodResolver(formValidator),
     defaultValues: {
-      actions_happened: actionsThatBroughtMe?.length
-        ? actionsThatBroughtMe
+      actions_happened: register.actionsThatBroughtMe?.length
+        ? register.actionsThatBroughtMe
         : [{ desc: "" }],
-      actions_will_happen: actionsIWillTake?.length
-        ? actionsIWillTake
+      actions_will_happen: register.actionsIWillTake?.length
+        ? register.actionsIWillTake
         : [{ desc: "" }],
     },
     mode: "onChange",
@@ -108,7 +117,7 @@ export default function DailyStep2() {
         <CardDescription>Ludo Viajante</CardDescription>
       </CardHeader>
       <Form {...form}>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2">
           <CardContent className="flex flex-col w-full gap-4">
             {/* AÇÕES QUE ACONTECERAM */}
             <FormItem className="border p-4 rounded-md">
@@ -206,7 +215,7 @@ export default function DailyStep2() {
               nos leve ao próximo passo.
             </CardDescription>
           </CardContent>
-          <CardFooter className="flex w-full items-center justify-around">
+          <CardFooter className="flex w-full items-center justify-between">
             <PreviousPage
               onClick={() => router.push("/dialy/step-1")}
               variant="outline"
