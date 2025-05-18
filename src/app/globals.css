@@ -120,3 +120,31 @@
     @apply bg-background text-foreground;
   }
 }
+
+.title {
+  @apply text-lg font-semibold text-primary;
+}
+
+.description {
+  @apply text-base font-normal text-primary/80 text-justify;
+}
+
+.container {
+  @apply flex flex-col w-full items-center justify-center gap-2;
+}
+
+.events {
+  @apply flex flex-col w-full items-start gap-1;
+}
+
+.actions {
+  @apply flex flex-row flex-wrap w-full items-start justify-around gap-1 py-2 border-y-2 border-border;
+}
+
+.action {
+  @apply flex flex-col w-full sm:max-w-xs gap-1;
+}
+
+.action-list {
+  @apply ml-8 list-disc;
+}

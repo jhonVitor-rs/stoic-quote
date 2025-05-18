@@ -21,7 +21,7 @@ interface props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export function PreviousPage({ className, variant, size, ...rest }: props) {
   return (
     <Tooltip>
-      <TooltipTrigger>
+      <TooltipTrigger asChild>
         <Button
           {...rest}
           className={cn("rounded-full border-primary", className)}
@@ -41,7 +41,7 @@ export function PreviousPage({ className, variant, size, ...rest }: props) {
 export function NextPage({ className, variant, size, ...rest }: props) {
   return (
     <Tooltip>
-      <TooltipTrigger>
+      <TooltipTrigger asChild>
         <Button
           {...rest}
           className={cn("rounded-full border-primary", className)}
