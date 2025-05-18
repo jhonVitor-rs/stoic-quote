@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -13,12 +14,13 @@ import {
 import { useRegisterStore } from "@/context/provider";
 import { PreviousPage } from "@/components/navigation-buttons";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Home, Loader2 } from "lucide-react";
 import { convertDate } from "@/hooks/convert-date";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { MyDocument } from "@/components/my-document";
 
 export default function Resume() {
+  const register = useRegisterStore((s) => s.register);
   const {
     name,
     myEvents,
@@ -27,37 +29,72 @@ export default function Resume() {
     actionsThatBroughtMe,
     apprenticeship,
     createdAt,
-  } = useRegisterStore((s) => s.register);
+  } = register;
+
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsClient(true);
 
-    if (!myEvents || myEvents === "" || !otherEvents || otherEvents === "")
-      router.push("/dialy/step-1");
-    if (
-      !actionsThatBroughtMe ||
-      actionsThatBroughtMe.length < 3 ||
-      !actionsIWillTake ||
-      actionsIWillTake.length < 3
-    )
-      router.push("/dialy/step-2");
-    if (!apprenticeship || apprenticeship === "") router.push("/dialy/step-3");
-  }, [
-    myEvents,
-    otherEvents,
-    actionsIWillTake,
-    actionsThatBroughtMe,
-    apprenticeship,
-    router,
-  ]);
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+
+      if (register.id) {
+        console.log("Register loaded:", register);
+
+        if (
+          !myEvents ||
+          myEvents === "" ||
+          !otherEvents ||
+          otherEvents === ""
+        ) {
+          router.push("/dialy/step-1");
+          return;
+        }
+
+        if (
+          !actionsThatBroughtMe ||
+          actionsThatBroughtMe.length < 3 ||
+          !actionsIWillTake ||
+          actionsIWillTake.length < 3
+        ) {
+          router.push("/dialy/step-2");
+          return;
+        }
+
+        if (!apprenticeship || apprenticeship === "") {
+          router.push("/dialy/step-3");
+          return;
+        }
+      } else {
+        console.log("No register found, redirecting to step 1");
+        router.push("/dialy/step-1");
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [register, router]);
+
+  if (isLoading || !isClient) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div className="flex flex-col w-full gap-4">
+    <div className="flex flex-col w-full gap-4 p-4">
       <CardHeader>
-        <CardTitle>Seu aprendizado diário</CardTitle>
-        <CardDescription>Revise os dados que você preencheu</CardDescription>
+        <div className="flex items-center gap-2">
+          <Button onClick={() => router.push("/")}>
+            <Home />
+          </Button>
+          <div>
+            <CardTitle>Seu aprendizado diário</CardTitle>
+            <CardDescription>
+              Revise os dados que você preencheu
+            </CardDescription>
+          </div>
+        </div>
       </CardHeader>
 
       <Card className="print-container">

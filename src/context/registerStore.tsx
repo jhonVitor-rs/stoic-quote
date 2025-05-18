@@ -15,20 +15,24 @@ export type TRegister = {
 
 export interface RegisterState {
   register: TRegister;
+  dialy: TRegister[];
 }
 
 export interface RegisterStore extends RegisterState {
   fill: (register: TRegister) => void;
-  new: (name: string) => void;
+  new: (name: string) => TRegister;
   editedEvents: (myEvents: string, otherEvents: string) => void;
   editedActions: (
     actionHappend: { desc: string }[],
     actionsWillHappen: { desc: string }[]
   ) => void;
   editedApprenticeship: (text: string) => void;
+  getRegister: (id: string) => TRegister | null;
+  deleteRegister: (id: string) => void;
 }
 
 const defaultInitialState: RegisterState = {
+  dialy: [],
   register: {
     id: "",
     name: "",
@@ -47,45 +51,92 @@ export const createRegisterStore = (
 ) => {
   return create<RegisterStore>()(
     persist(
-      (set) => ({
+      (set, get) => ({
         ...initialProps,
         fill: (register) => set(() => ({ register })),
-        new: (name) =>
+        new: (name) => {
+          const newRegister: TRegister = {
+            id: uuidv4(),
+            name,
+            myEvents: "",
+            otherEvents: "",
+            actionsIWillTake: [],
+            actionsThatBroughtMe: [],
+            apprenticeship: "",
+            createdAt: new Date(),
+          };
           set(() => ({
-            register: {
-              id: uuidv4(),
-              name,
-              myEvents: "",
-              otherEvents: "",
-              actionsIWillTake: [],
-              actionsThatBroughtMe: [],
-              apprenticeship: "",
-              createdAt: new Date(),
-            },
-          })),
+            register: newRegister,
+            dialy: [...initialProps.dialy, newRegister],
+          }));
+          return newRegister;
+        },
         editedEvents: (myEvents, otherEvents) =>
-          set((state) => ({
-            register: {
-              ...state.register,
-              myEvents,
-              otherEvents,
-            },
-          })),
+          set((state) => {
+            const updatedDialy = state.dialy.map((item) =>
+              item.id === state.register.id
+                ? { ...item, myEvents, otherEvents }
+                : item
+            );
+
+            return {
+              register: {
+                ...state.register,
+                myEvents,
+                otherEvents,
+              },
+              dialy: updatedDialy,
+            };
+          }),
         editedActions: (actionsThatBroughtMe, actionsIWillTake) =>
-          set((state) => ({
-            register: {
-              ...state.register,
-              actionsThatBroughtMe,
-              actionsIWillTake,
-            },
-          })),
+          set((state) => {
+            const updatedDialy = state.dialy.map((item) =>
+              item.id === state.register.id
+                ? { ...item, actionsThatBroughtMe, actionsIWillTake }
+                : item
+            );
+
+            return {
+              register: {
+                ...state.register,
+                actionsThatBroughtMe,
+                actionsIWillTake,
+              },
+              dialy: updatedDialy,
+            };
+          }),
         editedApprenticeship: (text) =>
-          set((state) => ({
-            register: {
-              ...state.register,
-              apprenticeship: text,
-            },
-          })),
+          set((state) => {
+            const updatedDialy = state.dialy.map((item) =>
+              item.id === state.register.id
+                ? { ...item, apprenticeship: text }
+                : item
+            );
+
+            return {
+              register: {
+                ...state.register,
+                apprenticeship: text,
+              },
+              dialy: updatedDialy,
+            };
+          }),
+        getRegister: (id) => {
+          const currentState = get();
+          const register = currentState.dialy.find((r) => r.id === id);
+
+          if (register) {
+            set(() => ({ register }));
+            return register;
+          }
+          return null;
+        },
+
+        deleteRegister: (id) => {
+          const currentState = get();
+          const newDialy = currentState.dialy.filter((r) => r.id !== id);
+          set(() => ({ dialy: newDialy }));
+        },
       }),
       {
         name: "register-store",

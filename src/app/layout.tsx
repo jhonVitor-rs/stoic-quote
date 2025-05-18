@@ -34,7 +34,7 @@ export default function RootLayout({
           geistMono.variable
         )}
       >
-        <div className="flex w-full max-w-5xl min-h-screen p-2 items-center justify-center bg-background shadow-4xl shadow-border border-l-8 border-primary">
+        <div className="flex w-full max-w-5xl min-h-screen bg-background shadow-4xl shadow-border border-l-8 border-primary">
           <ContextProvider>
             <TooltipProvider>{children}</TooltipProvider>
           </ContextProvider>

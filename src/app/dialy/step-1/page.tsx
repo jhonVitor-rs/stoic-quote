@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Home } from "lucide-react";
 import { useRegisterStore } from "@/context/provider";
 import {
   CardContent,
@@ -23,6 +24,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { NextPage } from "@/components/navigation-buttons";
+import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({
   my_events: z
@@ -53,19 +55,26 @@ export default function DialyStep1() {
   });
 
   return (
-    <div className="flex flex-col w-full gap-4">
+    <div className="flex flex-col w-full gap-4 p-4">
       <CardHeader>
-        <CardTitle>Epicteto dizia:</CardTitle>
-        <CardDescription>
-          “A vida tem dois lados: um pelo qual pode ser levada — seus valores,
-          suas ações, seu senso de si — e outro pelo qual não pode. Concentre-se
-          apenas naquilo que está sob seu controle...”;
-        </CardDescription>
-        <CardDescription>
-          Para os estoicos, somos apenas atores em uma peça. A única coisa que
-          um ator pode fazer é desempenhar da melhor forma o papel que lhe foi
-          atribuído.
-        </CardDescription>
+        <div className="flex items-start gap-2">
+          <Button onClick={() => router.push("/")}>
+            <Home />
+          </Button>
+          <div>
+            <CardTitle>Epicteto dizia:</CardTitle>
+            <CardDescription>
+              “A vida tem dois lados: um pelo qual pode ser levada — seus
+              valores, suas ações, seu senso de si — e outro pelo qual não pode.
+              Concentre-se apenas naquilo que está sob seu controle...”;
+            </CardDescription>
+            <CardDescription>
+              Para os estoicos, somos apenas atores em uma peça. A única coisa
+              que um ator pode fazer é desempenhar da melhor forma o papel que
+              lhe foi atribuído.
+            </CardDescription>
+          </div>
+        </div>
       </CardHeader>
 
       <Form {...form}>

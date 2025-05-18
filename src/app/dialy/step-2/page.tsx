@@ -3,9 +3,10 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import { z } from "zod";
+import { useRegisterStore } from "@/context/provider";
+import { Home, Plus, X } from "lucide-react";
 import {
   CardContent,
   CardDescription,
@@ -25,8 +26,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { NextPage, PreviousPage } from "@/components/navigation-buttons";
-import { useRegisterStore } from "@/context/provider";
-import { Plus, X } from "lucide-react";
 
 const schema = z.object({
   actions_happened: z
@@ -94,18 +93,25 @@ export default function DailyStep2() {
   };
 
   return (
-    <div className="flex flex-col w-full gap-4">
+    <div className="flex flex-col w-full gap-4 p-4">
       <CardHeader>
-        <CardTitle>“Por que escolher é difícil?”</CardTitle>
-        <CardDescription>
-          Porque a cada decisão definimos quem somos — e, de um ponto de vista
-          existencial, essa é uma responsabilidade tremenda.
-        </CardDescription>
-        <CardDescription>
-          Quando você diz “não vou escolher”, você já está escolhendo: escolheu
-          ficar parado.
-        </CardDescription>
-        <CardDescription>— Ludo Viajante</CardDescription>
+        <div className="flex items-start gap-2">
+          <Button onClick={() => router.push("/")}>
+            <Home />
+          </Button>
+          <div>
+            <CardTitle>“Por que escolher é difícil?”</CardTitle>
+            <CardDescription>
+              Porque a cada decisão definimos quem somos — e, de um ponto de
+              vista existencial, essa é uma responsabilidade tremenda.
+            </CardDescription>
+            <CardDescription>
+              Quando você diz “não vou escolher”, você já está escolhendo:
+              escolheu ficar parado.
+            </CardDescription>
+            <CardDescription>— Ludo Viajante</CardDescription>
+          </div>
+        </div>
       </CardHeader>
 
       <Form {...form}>

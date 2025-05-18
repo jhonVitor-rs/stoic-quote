@@ -1,6 +1,14 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Home } from "lucide-react";
+import { useRegisterStore } from "@/context/provider";
 import { NextPage, PreviousPage } from "@/components/navigation-buttons";
+import { Button } from "@/components/ui/button";
 import {
   CardContent,
   CardDescription,
@@ -18,12 +26,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { useRegisterStore } from "@/context/provider";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 const formValidate = z.object({
   apprenticeship: z
@@ -61,19 +63,26 @@ export default function DialyStep3() {
   });
 
   return (
-    <div className="flex flex-col w-full gap-4">
+    <div className="flex flex-col w-full gap-4 p-4">
       <CardHeader>
-        <CardTitle>Amor Fati de Nietzsche</CardTitle>
-        <CardDescription>
-          &quot;Amor Fati seria então o supremo ato de amor próprio. Você olha
-          pra sua vida e reconhece que pra ser quem voce e hoje, tudo precisou
-          acontecer do jeito que aconteceu...
-        </CardDescription>
-        <CardDescription>
-          ... E talvez você nem esteja feliz com quem você é hoje, mas ai e que
-          tá. Graças ao que te aconteceu você sabe que precisa mudar e também
-          sabe que não vai ser facil.&quot;
-        </CardDescription>
+        <div className="flex items-start gap-2">
+          <Button onClick={() => router.push("/")}>
+            <Home />
+          </Button>
+          <div>
+            <CardTitle>Amor Fati de Nietzsche</CardTitle>
+            <CardDescription>
+              &quot;Amor Fati seria então o supremo ato de amor próprio. Você
+              olha pra sua vida e reconhece que pra ser quem voce e hoje, tudo
+              precisou acontecer do jeito que aconteceu...
+            </CardDescription>
+            <CardDescription>
+              ... E talvez você nem esteja feliz com quem você é hoje, mas ai e
+              que tá. Graças ao que te aconteceu você sabe que precisa mudar e
+              também sabe que não vai ser facil.&quot;
+            </CardDescription>
+          </div>
+        </div>
       </CardHeader>
 
       <Form {...form}>
@@ -99,7 +108,7 @@ export default function DialyStep3() {
           </CardContent>
           <CardFooter className="flex w-full items-center justify-between">
             <PreviousPage
-              onClick={() => router.push("/dialy/step-1")}
+              onClick={() => router.push("/dialy/step-2")}
               variant="outline"
             />
             <NextPage type="submit" variant="outline" />

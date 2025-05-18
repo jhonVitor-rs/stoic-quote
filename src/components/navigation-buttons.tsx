@@ -27,6 +27,7 @@ export function PreviousPage({ className, variant, size, ...rest }: props) {
           className={cn("rounded-full border-primary", className)}
           variant={variant}
           size={size}
+          type="button"
         >
           <ArrowLeft />
         </Button>
